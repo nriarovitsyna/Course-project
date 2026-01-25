@@ -1,0 +1,32 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: course_postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-postgres}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: course_backend
+    depends_on:
+      - postgres
+    environment:
+      DATABASE_URL: postgresql+psycopg2://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-postgres}
+      AUTO_IMPORT_ON_STARTUP: "true"
+      DATASET_PATH: /Data/Dataset_kursach-List1.csv
+      CORS_ORIGINS: '["http://localhost:5500","http://127.0.0.1:5500"]'
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./Data:/Data:ro
+
+volumes:
+  postgres_data:
