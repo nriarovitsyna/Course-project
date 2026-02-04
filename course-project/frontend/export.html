@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Экспорт данных</title>
+  <link rel="stylesheet" href="./css/styles.css" />
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="logo"></div>
+        <div>
+          <div class="title">EduPrograms</div>
+          <div class="subtitle">Экспорт</div>
+        </div>
+      </div>
+      <nav class="nav">
+        <a href="catalog.html">Каталог программ</a>
+        <a href="compare.html">Сравнение программ</a>
+        <a href="analytics.html">Графики и статистика</a>
+        <a href="smart.html">Умный анализ</a>
+        <a href="export.html">Экспорт данных</a>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="left">
+          <button class="ghost" id="btnMenu">Меню</button>
+          <div style="font-weight:650;">Экспорт данных</div>
+        </div>
+        <div class="actions">
+          <button class="primary" id="btnExport">Сгенерировать файл</button>
+        </div>
+      </div>
+
+        <div class="card" style="padding:14px;">
+          <div class="form">
+            <div class="row">
+              <label>Набор данных</label>
+              <select id="dataset">
+                <option value="compare">Сравнение программ</option>
+              </select>
+            </div>
+            <div class="row">
+              <label>Формат</label>
+              <select id="format">
+                <option value="csv">CSV</option>
+              </select>
+            </div>
+            <div class="row">
+              <label>Имя файла</label>
+              <input id="filename" type="text" value="export.csv" />
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="padding:14px; margin-top:12px;">
+          <div style="font-weight:650; margin-bottom:8px;">Предпросмотр</div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>id</th><th>name</th><th>faculty</th><th>level</th><th>university_name</th><th>city</th><th>budget_places</th><th>paid_places</th><th>tuition_cost_rub_year</th><th>budget_passing_score</th><th>paid_min_score</th><th>duration</th><th>study_format</th><th>language</th><th>accreditation</th></tr>
+              </thead>
+              <tbody id="preview"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer">
+        <div>Версия: <span id="appVersion">—</span></div>
+        <div>© 2026</div>
+      </div>
+    </main>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <script type="module" src="./js/export.js"></script>
+</body>
+</html>

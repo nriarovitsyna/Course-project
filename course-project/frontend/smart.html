@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Умный анализ</title>
+  <link rel="stylesheet" href="./css/styles.css" />
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="logo"></div>
+        <div>
+          <div class="title">EduPrograms</div>
+          <div class="subtitle">Умный анализ</div>
+        </div>
+      </div>
+      <nav class="nav">
+        <a href="catalog.html">Каталог программ</a>
+        <a href="compare.html">Сравнение программ</a>
+        <a href="analytics.html">Графики и статистика</a>
+        <a href="smart.html">Умный анализ</a>
+        <a href="export.html">Экспорт данных</a>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="left">
+          <button class="ghost" id="btnMenu">Меню</button>
+          <div style="font-weight:650;">Умный анализ</div>
+        </div>
+        <div class="actions">
+          <button class="primary" disabled>Получить рекомендации</button>
+        </div>
+      </div>
+
+      <div class="footer">
+        <div>Версия: <span id="appVersion">—</span></div>
+        <div>© 2026</div>
+      </div>
+    </main>
+  </div>
+
+  <script type="module">
+    import { initLayout } from "./js/app.js";
+    initLayout();
+  </script>
+</body>
+</html>

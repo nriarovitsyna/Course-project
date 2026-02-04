@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Графики и статистика</title>
+  <link rel="stylesheet" href="./css/styles.css" />
+  <script src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="logo"></div>
+        <div>
+          <div class="title">EduPrograms</div>
+          <div class="subtitle">Дашборды</div>
+        </div>
+      </div>
+      <nav class="nav">
+        <a href="catalog.html">Каталог программ</a>
+        <a href="compare.html">Сравнение программ</a>
+        <a href="analytics.html">Графики и статистика</a>
+        <a href="smart.html">Умный анализ</a>
+        <a href="export.html">Экспорт данных</a>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="left">
+          <button class="ghost" id="btnMenu">Меню</button>
+          <div style="font-weight:650;">Графики и статистика</div>
+        </div>
+        <div class="actions">
+          <button id="btnReload" class="primary">Обновить</button>
+        </div>
+      </div>
+
+        <div class="grid" style="grid-template-columns: repeat(2, minmax(0, 1fr));">
+          <div class="card" style="padding:12px;">
+            <div style="font-weight:650; margin-bottom:8px;">Дашборд</div>
+            <div id="plot" style="height:420px;"></div>
+          </div>
+          <div class="card" style="padding:12px;">
+            <div style="font-weight:650; margin-bottom:8px;">Сводка</div>
+            <pre id="raw" style="white-space:pre-wrap; color:var(--muted); margin:0;"></pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer">
+        <div>Версия: <span id="appVersion">—</span></div>
+        <div>© 2026</div>
+      </div>
+    </main>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <script type="module" src="./js/analytics.js"></script>
+</body>
+</html>
