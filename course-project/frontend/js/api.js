@@ -14,6 +14,10 @@ async function httpGet(path, query){
 export const Api = {
   getPrograms: (params) => httpGet("/programs", params),          
   getProgram: (id) => httpGet(`/programs/${id}`),                 
-  getFilterValues: () => httpGet("/filters/values"),              
-  getDashboard: () => httpGet("/analytics/dashboard"),            
+  getFilterValues: () => httpGet("/filters/values"),         
+  
+  getAnalyticsSummary: (params) => httpGet("/analytics/analytics/summary", params),
+  getProgramsByCity: (params) => httpGet("/analytics/analytics/programs-by-city", params),
+  getProgramsByFaculty: (params) => httpGet("/analytics/analytics/programs-by-faculty", params),
+  getBudgetVsPaid: (params) => httpGet("/analytics/analytics/budget-vs-paid", params),
 };
