@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Графики и статистика</title>
+  <link rel="stylesheet" href="./css/styles.css" />
+  <script src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>
+
+  <style>
+    .analytics-layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .analytics-card {
+      padding: 14px;
+    }
+
+    .card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .card-title {
+      font-weight: 650;
+      margin: 0;
+    }
+
+    .card-hint {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .plots-stack {
+      display: grid;
+      gap: 14px;
+    }
+
+    .plot-card {
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 14px;
+      background: rgba(255,255,255,0.02);
+      padding: 12px;
+    }
+
+    .plot-card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .plot-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      margin: 0;
+    }
+
+    .plot-tools {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .plot-tools button {
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.03);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 6px 10px;
+      font-size: 12px;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    .plot-tools button:hover {
+      background: rgba(255,255,255,0.07);
+    }
+
+    .plot-frame {
+      width: 100%;
+      min-height: 420px;
+      height: 420px;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .summary-box {
+      min-height: 300px;
+      max-height: 70vh;
+      overflow: auto;
+      white-space: pre-wrap;
+      color: var(--muted);
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    @media (max-width: 1100px) {
+      .analytics-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .plot-frame {
+        min-height: 340px;
+        height: 340px;
+      }
+
+      .plot-card-head {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .card-head {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="logo"></div>
+        <div>
+          <div class="title">EduPrograms</div>
+          <div class="subtitle">Дашборды</div>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <a href="catalog.html">Каталог программ</a>
+        <a href="compare.html">Сравнение программ</a>
+        <a href="analytics.html">Графики и статистика</a>
+        <a href="smart.html">Умный анализ</a>
+        <a href="export.html">Экспорт данных</a>
+      </nav>
+    </aside>
+
+    <main class="main" id="content">
+      <div class="topbar">
+        <div class="left">
+          <button class="ghost" id="btnMenu">Меню</button>
+          <div style="font-weight:650;">Графики и статистика</div>
+        </div>
+
+        <div class="actions">
+          <button id="btnReload" class="primary">Обновить</button>
+        </div>
+      </div>
+
+      <section class="analytics-layout">
+        <div class="card analytics-card">
+          <div class="card-head">
+            <div>
+              <div class="card-title">Дашборд</div>
+            </div>
+          </div>
+      
+          <div id="plots" class="plots-stack"></div>
+        </div>
+      </section>
+
+      <div class="footer">
+        <div>Версия: <span id="appVersion">—</span></div>
+        <div>© 2026</div>
+      </div>
+    </main>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <script type="module" src="./js/analytics.js"></script>
+</body>
+</html>

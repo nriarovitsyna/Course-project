@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Каталог программ</title>
+  <link rel="stylesheet" href="./css/styles.css" />
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="logo"></div>
+        <div>
+          <div class="title">EduPrograms</div>
+          <div class="subtitle">Каталог программ</div>
+        </div>
+      </div>
+      <nav class="nav">
+        <a href="catalog.html">Каталог программ</a>
+        <a href="compare.html">Сравнение программ</a>
+        <a href="analytics.html">Графики и статистика</a>
+        <a href="smart.html">Умный анализ</a>
+        <a href="export.html">Экспорт данных</a>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="left">
+          <button class="ghost" id="btnMenu">Меню</button>
+          <div class="search">
+            <input id="globalSearch" type="text" placeholder="Поиск ..." />
+            <span class="kbd">Ctrl K</span>
+          </div>
+        </div>
+        <div class="actions">
+          <button id="btnFilters" title="Фильтры">Фильтры</button>
+        </div>
+      </div>
+
+      <div class="content" id="content">
+        <div class="toolbar">
+          <div class="group">
+            <button class="primary" id="viewTable" title="Таблица">Таблица</button>
+            <button id="viewCards" title="Карточки">Карточки</button>
+            <span style="color:var(--muted);" id="totalInfo">—</span>
+          </div>
+
+          <div class="group">
+            <button id="btnClear">Сбросить</button>
+            <a class="chip" href="compare.html">Сравнение (<span id="cmpCount">0</span>)</a>
+          </div>
+        </div>
+
+        <div class="chips" id="chips"></div>
+
+        <div id="tableBlock" class="card" style="padding:0;">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th data-sort="name">Название прогаммы <span class="sort" id="s_name"></span></th>
+                  <th data-sort="faculty">Факультет <span class="sort" id="s_faculty"></span></th>
+                  <th data-sort="level">Уровень <span class="sort" id="s_level"></span></th>
+                  <th data-sort="university_name">ВУЗ <span class="sort" id="s_university_name"></span></th>
+                  <th data-sort="city">Город <span class="sort" id="s_city"></span></th>
+                  <th data-sort="budget_places">Бюджетные места <span class="sort" id="s_budget_places"></span></th>
+                  <th data-sort="paid_places">Платные места <span class="sort" id="s_paid_places"></span></th>
+                  <th data-sort="tuition_cost_rub_year">Стоимость обучения (руб.) <span class="sort" id="s_tuition_cost_rub_year"></span></th>
+                  <th data-sort="budget_passing_score">Проходной балл на бюджетные места <span class="sort" id="s_budget_passing_score"></span></th>
+                  <th data-sort="paid_min_score">Проходной балл на платные места <span class="sort" id="s_paid_min_score"></span></th>
+                  <th data-sort="duration">Длительность обучения <span class="sort" id="s_duration"></span></th>
+                  <th data-sort="study_format">Форма обучения <span class="sort" id="s_study_forma"></span></th>
+                  <th data-sort="language">Язык <span class="sort" id="s_language"></span></th>
+                  <th data-sort="accreditation">Аккредитиция <span class="sort" id="s_accreditation"></span></th>
+                  <th>Действия</th>
+                </tr>
+              </thead>
+              <tbody id="tbody"></tbody>
+            </table>
+          </div>
+          <div class="pagination" id="pagination"></div>
+        </div>
+
+        <div id="cardsBlock" class="grid" style="display:none;"></div>
+      </div>
+
+      <div class="footer">
+        <div>Версия: <span id="appVersion">—</span></div>
+        <div>© 2026</div>
+      </div>
+    </main>
+  </div>
+
+  <aside class="drawer" id="drawer">
+    <div class="head">
+      <div style="font-weight:650;">Фильтры</div>
+      <button class="ghost" id="btnCloseDrawer">Закрыть</button>
+    </div>
+
+    <div class="form">
+      <div class="row">
+        <label>Факультет</label>
+        <select id="fFaculty">
+          <option value="">Любой</option>
+        </select>
+      </div>
+
+    <div class="row">
+        <label>Уровень</label>
+        <select id="fLevel">
+          <option value="">Любой</option>
+        </select>
+      </div>
+    
+      <div class="row">
+        <label>ВУЗ</label>
+        <select id="fUniversity">
+          <option value="">Любой</option>
+        </select>
+      </div>
+
+      <div class="row">
+        <label>Город</label>
+        <select id="fCity">
+          <option value="">Любой</option>
+        </select>
+      </div>
+
+      <div class="row">
+        <label>Стоимость (₽/год)</label>
+        <div style="display:flex; gap:8px;">
+          <input id="fMin" type="number" min="0" placeholder="от" style="width:50%;" />
+          <input id="fMax" type="number" min="0" placeholder="до" style="width:50%;" />
+        </div>
+      </div>
+
+      <div class="row">
+        <label><input id="fBudget" type="checkbox" /> Только с бюджетными местами</label>
+      </div>
+
+      <div class="row">
+        <label>Длительность обучения</label>
+        <select id="fDuration">
+          <option value="">Любая</option>
+        </select>
+      </div>
+
+      <div class="row">
+        <label>Форма обучения</label>
+        <select id="fStudyFormat">
+          <option value="">Любая</option>
+        </select>
+      </div>
+
+      <div class="row">
+        <label>Аккредитиция</label>
+        <select id="fAccreditation">
+          <option value="">Любая</option>
+        </select>
+      </div>
+
+      <div style="display:flex; gap:8px; margin-top:6px;">
+        <button class="primary" id="btnApply">Применить</button>
+        <button id="btnReset">Сбросить</button>
+      </div>
+    </div>
+  </aside>
+
+  <div class="modal-backdrop" id="mb"></div>
+  <div class="modal" id="modal">
+    <div class="head">
+      <div>
+        <div style="font-weight:650;" id="mTitle">Детали</div>
+        <div style="color:var(--muted); font-size:12px;" id="mSub">—</div>
+      </div>
+      <div style="display:flex; gap:8px;">
+        <button class="primary" id="btnAddCompare">Добавить в сравнение</button>
+        <button class="ghost" id="btnCloseModal">Закрыть</button>
+      </div>
+    </div>
+    <div class="sections" id="mBody"></div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <script type="module" src="./js/catalog.js"></script>
+</body>
+</html>

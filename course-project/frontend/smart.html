@@ -1,0 +1,645 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Умный анализ — EduPrograms</title>
+  <link rel="stylesheet" href="./css/styles.css" />
+  <style>
+    .smart-layout {
+      display: grid;
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .smart-tabs {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 4px;
+    }
+
+    .smart-tab-btn {
+      min-height: 44px;
+      padding: 10px 18px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .smart-tab-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .smart-tab-btn.active {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    .smart-panel {
+      display: grid;
+      gap: 18px;
+    }
+
+    .smart-tab-panel[hidden] {
+      display: none !important;
+    }
+
+    .smart-textarea {
+      width: 100%;
+      min-height: 120px;
+      padding: 16px;
+      border-radius: 14px;
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--line);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 15px;
+      resize: vertical;
+      margin: 0;
+    }
+
+    .controls-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 220px;
+      gap: 16px;
+      align-items: end;
+    }
+
+    .control-label {
+      display: block;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .range-wrap {
+      display: grid;
+      gap: 8px;
+    }
+
+    .range-value {
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .smart-select,
+    .smart-input {
+      width: 100%;
+      height: 44px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--line);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .range-input {
+      width: 100%;
+      accent-color: var(--accent);
+    }
+
+    .actions-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .smart-hint {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 16px;
+    }
+
+    .empty-state {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 40px;
+      color: var(--muted);
+    }
+
+    .ml-grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .ml-grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .ml-box {
+      display: grid;
+      gap: 16px;
+      padding: 20px;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .section-title {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .section-subtitle {
+      margin: 0;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    @media (max-width: 900px) {
+      .controls-grid,
+      .ml-grid-2,
+      .ml-grid-3 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .results-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .smart-textarea {
+        min-height: 110px;
+      }
+
+      .smart-tabs {
+        flex-direction: column;
+      }
+
+      .smart-tab-btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="logo"></div>
+        <div>
+          <div class="title">EduPrograms</div>
+          <div class="subtitle">Умный анализ</div>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <a href="catalog.html">Каталог программ</a>
+        <a href="compare.html">Сравнение программ</a>
+        <a href="analytics.html">Графики и статистика</a>
+        <a href="smart.html" class="active">Умный анализ</a>
+        <a href="export.html">Экспорт данных</a>
+      </nav>
+    </aside>
+
+    <main class="main" id="content">
+      <div class="topbar">
+        <div class="left">
+          <button class="ghost" id="btnMenu" type="button">Меню</button>
+          <div style="font-weight:650;">Умный анализ</div>
+        </div>
+      </div>
+
+      <section class="smart-layout">
+        <div class="smart-tabs" role="tablist" aria-label="Разделы умного анализа">
+          <button
+            class="smart-tab-btn active"
+            type="button"
+            data-tab="recommendations"
+            role="tab"
+            aria-selected="true"
+          >
+            Рекомендации
+          </button>
+
+          <button
+            class="smart-tab-btn"
+            type="button"
+            data-tab="cluster"
+            role="tab"
+            aria-selected="false"
+          >
+            Кластерный анализ
+          </button>
+
+          <button
+            class="smart-tab-btn"
+            type="button"
+            data-tab="prediction"
+            role="tab"
+            aria-selected="false"
+          >
+            Прогнозирование
+          </button>
+
+          <button
+            class="smart-tab-btn"
+            type="button"
+            data-tab="classification"
+            role="tab"
+            aria-selected="false"
+          >
+            Классификация
+          </button>
+        </div>
+
+        <div
+          class="card smart-tab-panel"
+          data-panel="recommendations"
+          role="tabpanel"
+          style="padding: 24px;"
+        >
+          <div class="smart-panel">
+            <div>
+              <div style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">
+                Поиск по естественному языку
+              </div>
+              <div class="smart-hint">
+                Опишите желаемую программу своими словами: город, уровень, бюджет, формат, баллы, направление подготовки.
+              </div>
+            </div>
+
+            <div>
+              <label for="ml-input" class="control-label">Описание запроса</label>
+              <textarea
+                id="ml-input"
+                class="smart-textarea"
+                placeholder="Например: бакалавриат в Москве по анализу данных, до 300000 рублей, очная форма, с бюджетными местами"
+              ></textarea>
+            </div>
+
+            <div class="controls-grid">
+              <div class="range-wrap">
+                <label for="threshold-input" class="control-label">
+                  Минимальная совместимость: <span id="threshold-value" class="range-value">70%</span>
+                </label>
+                <input
+                  id="threshold-input"
+                  class="range-input"
+                  type="range"
+                  min="0"
+                  max="100"
+                  value="70"
+                />
+              </div>
+
+              <div>
+                <label for="limit-select" class="control-label">Сколько программ показать</label>
+                <select id="limit-select" class="smart-select">
+                  <option value="5">5 программ</option>
+                  <option value="10" selected>10 программ</option>
+                  <option value="20">20 программ</option>
+                  <option value="30">30 программ</option>
+                  <option value="50">50 программ</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="actions-row">
+              <button id="ml-execute" class="primary" type="button" style="padding: 10px 24px;">
+                Найти программы
+              </button>
+              <div class="smart-hint">
+                Результаты будут отсортированы по степени соответствия вашему запросу.
+              </div>
+            </div>
+          </div>
+
+          <div id="ml-results-meta" style="margin-top: 20px; margin-bottom: 12px; font-size: 13px; color: var(--muted);"></div>
+          <div id="ml-results" class="results-grid"></div>
+        </div>
+
+        <div
+          class="card smart-tab-panel"
+          data-panel="cluster"
+          role="tabpanel"
+          hidden
+          style="padding: 24px;"
+        >
+          <div class="smart-panel">
+            <div>
+              <div style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">
+                Кластерный анализ программ
+              </div>
+              <div class="smart-hint">
+                Группировка образовательных программ по схожим характеристикам для выявления общих закономерностей.
+              </div>
+            </div>
+
+            <div style="display: grid; gap: 16px; background: rgba(255, 255, 255, 0.03); padding: 20px; border-radius: 14px; border: 1px solid var(--line);">
+              <div style="font-weight: 600; font-size: 15px; color: var(--accent);">Настройки кластеризации</div>
+
+              <div class="controls-grid" style="grid-template-columns: minmax(0, 1fr) 220px;">
+                <div>
+                  <label class="control-label">Признаки для кластеризации</label>
+                  <div id="cluster-features" style="display: grid; gap: 8px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                      <input type="checkbox" value="name" checked>
+                      <span>Название программы</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                      <input type="checkbox" value="price" checked>
+                      <span>Стоимость обучения</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                      <input type="checkbox" value="city" checked>
+                      <span>Город</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                      <input type="checkbox" value="budget_passing_score" checked>
+                      <span>Проходной балл</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                      <input type="checkbox" value="level" checked>
+                      <span>Уровень образования</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                      <input type="checkbox" value="budget_places" checked>
+                      <span>Количество бюджетных мест</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                      <input type="checkbox" value="study_format" checked>
+                      <span>Форма обучения</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                      <input type="checkbox" value="duration">
+                      <span>Продолжительность</span>
+                    </label>
+                  </div>
+                </div>
+
+                <div style="display:grid; gap:16px; align-content:start;">
+                  <div>
+                    <label for="cluster-algorithm" class="control-label">Модель кластеризации</label>
+                    <select id="cluster-algorithm" class="smart-select">
+                      <option value="kmeans" selected>K-Means</option>
+                      <option value="agglomerative">Agglomerative Clustering</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label for="cluster-count" class="control-label">
+                      Количество кластеров: <span id="cluster-count-value" class="range-value">3</span>
+                    </label>
+                    <input
+                      type="range"
+                      id="cluster-count"
+                      class="range-input"
+                      min="2"
+                      max="10"
+                      value="3"
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <div class="actions-row">
+                <button id="cluster-execute" class="primary" type="button" style="padding: 10px 24px;">
+                  Выполнить кластеризацию
+                </button>
+                <div class="smart-hint">
+                  Алгоритм автоматически разделит программы на группы по выбранным признакам.
+                </div>
+              </div>
+            </div>
+
+            <div id="cluster-results-meta" style="margin-top: 20px; margin-bottom: 12px; font-size: 13px; color: var(--muted);"></div>
+            <div id="cluster-metrics" style="display: none;"></div>
+            <div id="cluster-summaries" style="display: grid; gap: 16px; margin-top: 16px;"></div>
+            <div id="cluster-items" style="display: grid; gap: 16px; margin-top: 16px;"></div>
+          </div>
+        </div>
+
+        <div
+          class="card smart-tab-panel"
+          data-panel="prediction"
+          role="tabpanel"
+          hidden
+          style="padding: 24px;"
+        >
+          <div class="smart-panel">
+            <div>
+              <div style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">
+                Прогнозирование проходного балла
+              </div>
+              <div class="smart-hint">
+                Введите характеристики программы, чтобы получить прогноз вероятного проходного балла.
+              </div>
+            </div>
+
+            <div class="ml-box">
+              <div>
+                <h3 class="section-title">Параметры для прогноза</h3>
+                <p class="section-subtitle">
+                  Используются признаки: город, уровень образования, длительность, вуз, стоимость, бюджетные и платные места.
+                </p>
+              </div>
+
+              <div class="ml-grid-3">
+                <div>
+                  <label for="predict-city" class="control-label">Город</label>
+                  <select id="predict-city" class="smart-select">
+                    <option value="">Не указан</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label for="predict-level" class="control-label">Уровень образования</label>
+                  <select id="predict-level" class="smart-select">
+                    <option value="">Не указан</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label for="predict-university" class="control-label">ВУЗ</label>
+                  <select id="predict-university" class="smart-select">
+                    <option value="">Не указан</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="ml-grid-3">
+                <div>
+                  <label for="predict-duration" class="control-label">Длительность обучения (лет)</label>
+                  <input id="predict-duration" class="smart-input" type="number" min="0" step="0.5" placeholder="Например, 4" />
+                </div>
+
+                <div>
+                  <label for="predict-price" class="control-label">Стоимость (руб./год)</label>
+                  <input id="predict-price" class="smart-input" type="number" min="0" step="1000" placeholder="Например, 320000" />
+                </div>
+
+                <div>
+                  <label for="predict-budget-places" class="control-label">Бюджетные места</label>
+                  <input id="predict-budget-places" class="smart-input" type="number" min="0" placeholder="Например, 50" />
+                </div>
+              </div>
+
+              <div class="ml-grid-3">
+                <div>
+                  <label for="predict-paid-places" class="control-label">Платные места</label>
+                  <input id="predict-paid-places" class="smart-input" type="number" min="0" placeholder="Например, 120" />
+                </div>
+              </div>
+
+              <div class="actions-row">
+                <button id="predict-execute" class="primary" type="button" style="padding: 10px 24px;">
+                  Предсказать балл
+                </button>
+                <div class="smart-hint">
+                  Используется модель RandomForestRegressor, обученная на исторических данных программ.
+                </div>
+              </div>
+
+              <div id="predict-result"></div>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="card smart-tab-panel"
+          data-panel="classification"
+          role="tabpanel"
+          hidden
+          style="padding: 24px;"
+        >
+          <div class="smart-panel">
+            <div>
+              <div style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">
+                Классификация конкурентоспособности
+              </div>
+              <div class="smart-hint">
+                Введите характеристики программы, чтобы определить её категорию конкурентоспособности.
+              </div>
+            </div>
+
+            <div class="ml-box">
+              <div>
+                <h3 class="section-title">Параметры для классификации</h3>
+                <p class="section-subtitle">
+                  Модель относит программу к категории: доступная, стандартная или высококонкурентная.
+                </p>
+              </div>
+
+              <div class="ml-grid-3">
+                <div>
+                  <label for="classify-city" class="control-label">Город</label>
+                  <select id="classify-city" class="smart-select">
+                    <option value="">Не указан</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label for="classify-level" class="control-label">Уровень образования</label>
+                  <select id="classify-level" class="smart-select">
+                    <option value="">Не указан</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label for="classify-university" class="control-label">ВУЗ</label>
+                  <select id="classify-university" class="smart-select">
+                    <option value="">Не указан</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="ml-grid-3">
+                <div>
+                  <label for="classify-duration" class="control-label">Длительность обучения (лет)</label>
+                  <input id="classify-duration" class="smart-input" type="number" min="0" step="0.5" placeholder="Например, 4" />
+                </div>
+
+                <div>
+                  <label for="classify-price" class="control-label">Стоимость (руб./год)</label>
+                  <input id="classify-price" class="smart-input" type="number" min="0" step="1000" placeholder="Например, 250000" />
+                </div>
+
+                <div>
+                  <label for="classify-budget-places" class="control-label">Бюджетные места</label>
+                  <input id="classify-budget-places" class="smart-input" type="number" min="0" placeholder="Например, 25" />
+                </div>
+              </div>
+
+              <div class="ml-grid-3">
+                <div>
+                  <label for="classify-paid-places" class="control-label">Платные места</label>
+                  <input id="classify-paid-places" class="smart-input" type="number" min="0" placeholder="Например, 80" />
+                </div>
+
+                <div>
+                  <label for="classify-budget-passing-score" class="control-label">Проходной балл</label>
+                  <input
+                  id="classify-budget-passing-score"
+                  class="smart-input"
+                  type="number"
+                  min="0"
+                  max="310"
+                  step="0.1"
+                  placeholder="Например, 245"/>
+                </div>
+              </div>
+
+              <div class="actions-row">
+                <button id="classify-execute" class="primary" type="button" style="padding: 10px 24px;">
+                  Классифицировать
+                </button>
+                <div class="smart-hint">
+                </div>
+              </div>
+
+              <div id="classify-result"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal-backdrop" id="mb"></div>
+
+  <div
+    class="modal"
+    id="modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="mTitle"
+  >
+    <div class="head">
+      <div>
+        <div id="mTitle" style="font-weight:650; font-size:18px;">Детали программы</div>
+        <div id="mSub" style="color:var(--muted); font-size:12px;"></div>
+      </div>
+      <button class="ghost" id="btnCloseModal" type="button" aria-label="Закрыть окно">Закрыть</button>
+    </div>
+
+    <div id="mDetails" class="sections"></div>
+  </div>
+
+  <div id="toast" class="toast-host"></div>
+
+  <script type="module" src="./js/smart.js"></script>
+</body>
+</html>
