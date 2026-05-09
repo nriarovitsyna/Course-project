@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Сравнение программ</title>
+  <link rel="stylesheet" href="./css/styles.css" />
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="logo"></div>
+        <div>
+          <div class="title">EduPrograms</div>
+          <div class="subtitle">Сравнение</div>
+        </div>
+      </div>
+      <nav class="nav">
+        <a href="catalog.html">Каталог программ</a>
+        <a href="compare.html">Сравнение программ</a>
+        <a href="analytics.html">Графики и статистика</a>
+        <a href="smart.html">Умный анализ</a>
+        <a href="export.html">Экспорт данных</a>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="left">
+          <button class="ghost" id="btnMenu">Меню</button>
+          <div style="font-weight:650;">Сравнение программ</div>
+        </div>
+        <div class="actions">
+          <button id="btnClear" class="danger">Очистить</button>
+          <button id="btnExport" class="primary">Экспортировать сравнение</button>
+        </div>
+      </div>
+
+        <div class="card" style="padding:0;">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Программа</th>
+                  <th>Вуз</th>
+                  <th>Город</th>
+                  <th>Уровень</th>
+                  <th>Стоимость</th>
+                  <th>Бюджетные места</th>
+                  <th>Платные места</th>
+                  <th>Проходной балл на бюджетные места</th>
+                  <th>Проходной балл на платные места</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="cmpBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer">
+        <div>Версия: <span id="appVersion">—</span></div>
+        <div>© 2026</div>
+      </div>
+    </main>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <script type="module" src="./js/compare.js"></script>
+</body>
+</html>

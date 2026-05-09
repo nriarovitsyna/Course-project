@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Каталог программ — EduPrograms</title>
+  <link rel="stylesheet" href="./css/styles.css" />
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="logo"></div>
+        <div>
+          <div class="title">EduPrograms</div>
+          <div class="subtitle">Аналитика образовательных программ</div>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <a href="catalog.html">Каталог программ</a>
+        <a href="compare.html">Сравнение программ</a>
+        <a href="analytics.html">Графики и статистика</a>
+        <a href="smart.html">Умный анализ</a>
+        <a href="export.html">Экспорт данных</a>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="left">
+          <button class="ghost" id="btnMenu" title="Меню">Меню</button>
+          <div class="search">
+            <input id="globalSearch" type="text" placeholder="Поиск по программам (название, вуз, город)..." />
+            <span class="kbd">Ctrl K</span>
+          </div>
+        </div>
+        <div class="actions">
+          <a class="chip" href="catalog.html">Перейти в каталог</a>
+        </div>
+      </div>
+
+      <div class="content" id="content">
+        <div class="card" style="padding:14px;">
+          <h2 style="margin:0 0 8px;">Добро пожаловать</h2>
+          <div style="color:var(--muted);">
+            Это предварительный интерфейс под обновлённое ТЗ: каталог, фильтры, сравнение и дашборд.
+          </div>
+        </div>
+      </div>
+
+      <div class="footer">
+        <div>Версия: <span id="appVersion">—</span></div>
+        <div>© 2026 • Документация/контакты</div>
+      </div>
+    </main>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script type="module">
+    import { initLayout, qs, debounce } from "./js/app.js";
+
+    initLayout();
+
+    const input = qs("#globalSearch");
+    const handler = debounce(() => {
+      const q = input.value.trim();
+      sessionStorage.setItem("catalog:q", q);
+    }, 250);
+
+    input.addEventListener("input", handler);
+
+    window.addEventListener("keydown", (e)=>{
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k"){
+        e.preventDefault();
+        input.focus();
+      }
+    });
+  </script>
+</body>
+</html>
