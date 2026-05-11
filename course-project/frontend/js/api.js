@@ -49,7 +49,10 @@ export const Api = {
   getProgramsByCity: (params) => httpGet("/analytics/analytics/programs-by-city", params),
   getProgramsByFaculty: (params) => httpGet("/analytics/analytics/programs-by-faculty", params),
   getBudgetVsPaid: (params) => httpGet("/analytics/analytics/budget-vs-paid", params),
-
+  getPriceBuckets: (params) => httpGet("/analytics/analytics/price-buckets", params),
+  getPriceVsBudget: (params) => httpGet("/analytics/analytics/price-vs-budget", params),
+  getAvgPriceByCity: (params) => httpGet("/analytics/analytics/avg-price-by-city", params),
+  getLevelFormat: (params) => httpGet("/analytics/analytics/level-format", params),
 
   // ===== ML =====
   smartSearch: (query, options = {}) =>

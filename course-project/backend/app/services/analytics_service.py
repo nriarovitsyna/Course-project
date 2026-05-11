@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import func, case
 
 from app.models.program import Program
-from app.schemas.analytics import Summary, Series
+from app.schemas.analytics import Summary, Series, Point
 
 
 def apply_common_filters(
@@ -139,4 +139,99 @@ def get_budget_vs_paid(db: Session, **filters) -> Series:
     rows = q.all()
     labels = [r[0] for r in rows]
     values = [r[1] for r in rows]
+    return Series(labels=labels, values=values)
+
+# PRICE BUCKETS (Распределение по диапазонам стоимости)
+
+
+def get_price_buckets(db: Session, **filters) -> Series:
+    q = db.query(Program.tuition_cost_rub_year)
+    q = apply_common_filters(q, **filters)
+    q = q.filter(Program.tuition_cost_rub_year != None)
+    rows = q.all()
+    prices = [row[0] for row in rows if row[0] is not None]
+
+    if not prices:
+        return Series(labels=[], values=[])
+
+    bins = [0, 100_000, 200_000, 300_000, 10**9]
+    labels = ["до 100k", "100–200k", "200–300k", "более 300k"]
+    counts = [0] * (len(bins) - 1)
+
+    for price in prices:
+        for i in range(len(bins) - 1):
+            if bins[i] <= price < bins[i + 1]:
+                counts[i] += 1
+                break
+
+    return Series(labels=labels, values=counts)
+
+
+# PRICE VS BUDGET (scatter: стоимость vs бюджетные места)
+
+
+def get_price_vs_budget(db: Session, **filters) -> list[Point]:
+    q = db.query(
+        Program.tuition_cost_rub_year,
+        Program.budget_places,
+        Program.name,
+    )
+    q = apply_common_filters(q, **filters)
+    q = q.filter(
+        Program.tuition_cost_rub_year != None,
+        Program.budget_places != None,
+    )
+
+    rows = q.all()
+    points: list[Point] = []
+    for price, budget, name in rows:
+        points.append(
+          Point(
+            x=float(price),
+            y=float(budget),
+            label=name,
+          )
+        )
+    return points
+
+
+# AVG PRICE BY CITY (Средняя стоимость по городам)
+
+
+def get_avg_price_by_city(db: Session, limit: int = 10, **filters) -> Series:
+    q = db.query(
+        Program.city,
+        func.avg(Program.tuition_cost_rub_year).label("avg_price"),
+    )
+    q = apply_common_filters(q, **filters)
+    q = q.filter(
+        Program.city != None,
+        Program.tuition_cost_rub_year != None,
+    )
+    q = q.group_by(Program.city).order_by(func.avg(Program.tuition_cost_rub_year).desc())
+    if limit:
+        q = q.limit(limit)
+
+    rows = q.all()
+    labels = [r[0] for r in rows]
+    values = [r[1] for r in rows]
+    return Series(labels=labels, values=values)
+
+
+# LEVEL × STUDY_FORMAT (Распределение по уровню и форме) 
+
+
+def get_level_format_distribution(db: Session, **filters) -> Series:
+    q = db.query(
+        Program.level,
+        Program.study_format,
+        func.count().label("cnt"),
+    )
+    q = apply_common_filters(q, **filters)
+    q = q.filter(Program.level != None, Program.study_format != None)
+    q = q.group_by(Program.level, Program.study_format)
+
+    rows = q.all()
+    labels = [f"{r[0]} / {r[1]}" for r in rows]
+    values = [r[2] for r in rows]
     return Series(labels=labels, values=values)

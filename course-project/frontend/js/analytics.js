@@ -174,7 +174,58 @@ function createPlotCard(fig, index) {
   return { card, frame, btnPlus, btnMinus, btnReset };
 }
 
-function buildFigures(summary, byCity, byFaculty, budgetVsPaid) {
+function toScatterFigure(points, title) {
+  const xs = Array.isArray(points) ? points.map(p => p.x) : [];
+  const ys = Array.isArray(points) ? points.map(p => p.y) : [];
+  const labels = Array.isArray(points) ? points.map(p => p.label || "") : [];
+
+  return {
+    title,
+    data: [
+      {
+        type: "scatter",
+        mode: "markers",
+        x: xs,
+        y: ys,
+        text: labels,
+        hovertemplate:
+          "%{text}<br>Стоимость: %{x} ₽/год<br>Бюджетных мест: %{y}<extra></extra>",
+        marker: {
+          color: "#4ca3dd",
+          size: 9,
+          line: { color: "#1f2937", width: 1 }
+        }
+      }
+    ],
+    layout: {
+      title: { text: title, x: 0.5 },
+      paper_bgcolor: "rgba(0,0,0,0)",
+      plot_bgcolor: "rgba(0,0,0,0)",
+      font: { color: "#e5e7eb" },
+      margin: { l: 60, r: 20, t: 50, b: 60 },
+      xaxis: {
+        title: "Стоимость (₽/год)",
+        gridcolor: "rgba(255,255,255,0.08)"
+      },
+      yaxis: {
+        title: "Бюджетные места",
+        gridcolor: "rgba(255,255,255,0.14)",
+        zerolinecolor: "rgba(255,255,255,0.18)"
+      }
+    }
+  };
+}
+
+function buildFigures(
+  summary,
+  byCity,
+  byFaculty,
+  budgetVsPaid,
+  priceBuckets,
+  priceVsBudget,
+  avgPriceByCity,
+  levelFormat
+) {
   const figures = [];
 
   if (byCity?.labels?.length) {
@@ -186,7 +237,43 @@ function buildFigures(summary, byCity, byFaculty, budgetVsPaid) {
   }
 
   if (budgetVsPaid?.labels?.length) {
-    figures.push(toPieFigure(budgetVsPaid, "Бюджет vs платное"));
+    figures.push(toPieFigure(budgetVsPaid, "Бюджет vs только платное"));
+  }
+
+  if (priceBuckets?.labels?.length) {
+    figures.push(
+      toBarFigure(priceBuckets, "Распределение программ по диапазонам стоимости")
+    );
+  }
+
+  if (Array.isArray(priceVsBudget) && priceVsBudget.length) {
+    figures.push(
+      toScatterFigure(
+        priceVsBudget,
+        "Стоимость обучения vs количество бюджетных мест"
+      )
+    );
+  }
+
+  if (avgPriceByCity?.labels?.length) {
+    const fig = toBarFigure(
+      avgPriceByCity,
+      "Средняя стоимость обучения по городам (Топ-10)"
+    );
+    fig.layout = {
+      ...fig.layout,
+      xaxis: { ...(fig.layout.xaxis || {}), title: "Средняя стоимость (₽/год)" }
+    };
+    figures.push(fig);
+  }
+
+  if (levelFormat?.labels?.length) {
+    figures.push(
+      toBarFigure(
+        levelFormat,
+        "Распределение программ по уровню подготовки и форме обучения"
+      )
+    );
   }
 
   if (summary) {
@@ -197,20 +284,23 @@ function buildFigures(summary, byCity, byFaculty, budgetVsPaid) {
       labels.push("Всего программ");
       values.push(summary.total_programs);
     }
-    if (typeof summary.with_budget_count === "number") {
+    if (typeof summary.budget_programs === "number") {
       labels.push("С бюджетом");
-      values.push(summary.with_budget_count);
+      values.push(summary.budget_programs);
     }
-    if (typeof summary.without_budget_count === "number") {
+    if (
+      typeof summary.total_programs === "number" &&
+      typeof summary.budget_programs === "number"
+    ) {
       labels.push("Без бюджета");
-      values.push(summary.without_budget_count);
+      values.push(summary.total_programs - summary.budget_programs);
     }
 
     if (labels.length) {
       figures.push(
         toBarFigure(
           { labels, values },
-          "Краткая сводка"
+          "Краткая сводка по количеству программ"
         )
       );
     }
@@ -239,14 +329,36 @@ async function load() {
       return;
     }
 
-    const [summary, byCity, byFaculty, budgetVsPaid] = await Promise.all([
+    const [
+      summary,
+      byCity,
+      byFaculty,
+      budgetVsPaid,
+      priceBuckets,
+      priceVsBudget,
+      avgPriceByCity,
+      levelFormat
+    ] = await Promise.all([
       Api.getAnalyticsSummary(),
       Api.getProgramsByCity({ limit: 10 }),
       Api.getProgramsByFaculty({ limit: 10 }),
-      Api.getBudgetVsPaid()
+      Api.getBudgetVsPaid(),
+      Api.getPriceBuckets(),
+      Api.getPriceVsBudget(),
+      Api.getAvgPriceByCity({ limit: 10 }),
+      Api.getLevelFormat()
     ]);
 
-    const figures = buildFigures(summary, byCity, byFaculty, budgetVsPaid);
+    const figures = buildFigures(
+      summary,
+      byCity,
+      byFaculty,
+      budgetVsPaid,
+      priceBuckets,
+      priceVsBudget,
+      avgPriceByCity,
+      levelFormat
+    );
 
     plotsEl.innerHTML = "";
 
@@ -279,20 +391,22 @@ async function load() {
           scrollZoom: false,
           doubleClick: "reset"
         }
-      ).then((gd) => {
-        bindPlotButtons(gd, fig, btnPlus, btnMinus, btnReset);
+      )
+        .then((gd) => {
+          bindPlotButtons(gd, fig, btnPlus, btnMinus, btnReset);
 
-        window.addEventListener("resize", () => {
-          Plotly.Plots.resize(gd);
-        });
-      }).catch((err) => {
-        console.error(`Ошибка рендера графика ${index}`, err);
-        frame.innerHTML = `
+          window.addEventListener("resize", () => {
+            Plotly.Plots.resize(gd);
+          });
+        })
+        .catch((err) => {
+          console.error(`Ошибка рендера графика ${index}`, err);
+          frame.innerHTML = `
           <div style="padding:16px;color:#f88;">
             Ошибка рендера графика ${index + 1}
           </div>
         `;
-      });
+        });
     });
   } catch (e) {
     console.error(e);

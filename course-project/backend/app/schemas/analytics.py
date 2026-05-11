@@ -12,3 +12,8 @@ class Summary(BaseModel):
 class Series(BaseModel):
     labels: List[str]
     values: List[float]
+
+class Point(BaseModel):
+    x: float
+    y: float
+    label: Optional[str] = None
