@@ -48,11 +48,13 @@
               <label>Формат</label>
               <select id="format">
                 <option value="csv">CSV</option>
+                <option value="xlsx">Excel (.xlsx)</option>
+                <option value="pdf">PDF</option>
               </select>
             </div>
             <div class="row">
               <label>Имя файла</label>
-              <input id="filename" type="text" value="export.csv" />
+              <input id="filename" type="text" value="export" />
             </div>
           </div>
         </div>
@@ -78,6 +80,10 @@
   </div>
 
   <div class="toast" id="toast"></div>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.4/dist/jspdf.plugin.autotable.min.js"></script>
   <script type="module" src="./js/export.js"></script>
 </body>
 </html>

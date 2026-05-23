@@ -52,7 +52,8 @@ export const Api = {
   getPriceBuckets: (params) => httpGet("/analytics/analytics/price-buckets", params),
   getPriceVsBudget: (params) => httpGet("/analytics/analytics/price-vs-budget", params),
   getAvgPriceByCity: (params) => httpGet("/analytics/analytics/avg-price-by-city", params),
-  getLevelFormat: (params) => httpGet("/analytics/analytics/level-format", params),
+  getLevelFormat: (params) => httpGet("/analytics/analytics/level-format", params), 
+
 
   // ===== ML =====
   smartSearch: (query, options = {}) =>

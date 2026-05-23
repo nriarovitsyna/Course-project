@@ -157,9 +157,19 @@ function createPlotCard(fig, index) {
   btnReset.type = "button";
   btnReset.textContent = "Сброс";
 
+  const btnPng = document.createElement("button");
+  btnPng.type = "button";
+  btnPng.textContent = "PNG";
+
+  const btnPdf = document.createElement("button");
+  btnPdf.type = "button";
+  btnPdf.textContent = "PDF";
+
   tools.appendChild(btnPlus);
   tools.appendChild(btnMinus);
   tools.appendChild(btnReset);
+  tools.appendChild(btnPng);
+  tools.appendChild(btnPdf);
 
   head.appendChild(title);
   head.appendChild(tools);
@@ -171,7 +181,7 @@ function createPlotCard(fig, index) {
   card.appendChild(head);
   card.appendChild(frame);
 
-  return { card, frame, btnPlus, btnMinus, btnReset };
+  return { card, frame, btnPlus, btnMinus, btnReset, btnPng, btnPdf };
 }
 
 function toScatterFigure(points, title) {
@@ -216,16 +226,7 @@ function toScatterFigure(points, title) {
   };
 }
 
-function buildFigures(
-  summary,
-  byCity,
-  byFaculty,
-  budgetVsPaid,
-  priceBuckets,
-  priceVsBudget,
-  avgPriceByCity,
-  levelFormat
-) {
+function buildFigures(summary, byCity, byFaculty, budgetVsPaid, priceBuckets, priceVsBudget, avgPriceByCity, levelFormat) {
   const figures = [];
 
   if (byCity?.labels?.length) {
@@ -329,16 +330,7 @@ async function load() {
       return;
     }
 
-    const [
-      summary,
-      byCity,
-      byFaculty,
-      budgetVsPaid,
-      priceBuckets,
-      priceVsBudget,
-      avgPriceByCity,
-      levelFormat
-    ] = await Promise.all([
+    const [summary, byCity, byFaculty, budgetVsPaid, priceBuckets, priceVsBudget, avgPriceByCity, levelFormat] = await Promise.all([
       Api.getAnalyticsSummary(),
       Api.getProgramsByCity({ limit: 10 }),
       Api.getProgramsByFaculty({ limit: 10 }),
@@ -349,16 +341,7 @@ async function load() {
       Api.getLevelFormat()
     ]);
 
-    const figures = buildFigures(
-      summary,
-      byCity,
-      byFaculty,
-      budgetVsPaid,
-      priceBuckets,
-      priceVsBudget,
-      avgPriceByCity,
-      levelFormat
-    );
+    const figures = buildFigures(summary, byCity, byFaculty, budgetVsPaid, priceBuckets, priceVsBudget, avgPriceByCity, levelFormat);
 
     plotsEl.innerHTML = "";
 
@@ -375,7 +358,8 @@ async function load() {
     }
 
     figures.forEach((fig, index) => {
-      const { card, frame, btnPlus, btnMinus, btnReset } = createPlotCard(fig, index);
+      const { card, frame, btnPlus, btnMinus, btnReset, btnPng, btnPdf } =
+        createPlotCard(fig, index);
       plotsEl.appendChild(card);
 
       Plotly.newPlot(
@@ -391,22 +375,103 @@ async function load() {
           scrollZoom: false,
           doubleClick: "reset"
         }
-      )
-        .then((gd) => {
-          bindPlotButtons(gd, fig, btnPlus, btnMinus, btnReset);
+      ).then((gd) => {
+        bindPlotButtons(gd, fig, btnPlus, btnMinus, btnReset);
 
-          window.addEventListener("resize", () => {
-            Plotly.Plots.resize(gd);
-          });
-        })
-        .catch((err) => {
-          console.error(`Ошибка рендера графика ${index}`, err);
-          frame.innerHTML = `
+        // PNG
+        btnPng.addEventListener("click", () => {
+          const title = fig?.title || `plot-${index + 1}`;
+          Plotly.toImage(gd, { format: "png", width: 1200, height: 600 })
+            .then((url) => {
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = `${title}.png`;
+              a.click();
+            })
+            .catch((err) => {
+              console.error("Ошибка экспорта PNG", err);
+              toast("Не удалось сохранить PNG");
+            });
+        });
+
+        // PDF
+        btnPdf.addEventListener("click", async () => {
+          try {
+            if (!window.jspdf || !window.jspdf.jsPDF) {
+              toast("jsPDF не загружен, PDF недоступен");
+              return;
+            }
+            
+
+            const title = "";
+            const url = await Plotly.toImage(gd, {
+              format: "png",
+              width: 1200,
+              height: 600
+            });
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF("l", "pt", "a4");
+
+            doc.setFillColor(15, 23, 42);
+            doc.rect(
+              0,
+              0,
+              doc.internal.pageSize.getWidth(),
+              doc.internal.pageSize.getHeight(),
+              "F"
+            );
+
+            const img = new Image();
+            img.src = url;
+            img.onload = () => {
+              const pageWidth = doc.internal.pageSize.getWidth();
+              const pageHeight = doc.internal.pageSize.getHeight();
+
+              const margin = 40;
+              const maxWidth = pageWidth - margin * 2;
+              const maxHeight = pageHeight - margin * 2;
+
+              let imgWidth = img.width;
+              let imgHeight = img.height;
+
+              const scale = Math.min(maxWidth / imgWidth, maxHeight / imgHeight);
+              imgWidth *= scale;
+              imgHeight *= scale;
+
+              const x = (pageWidth - imgWidth) / 2;
+              const y = (pageHeight - imgHeight) / 2;
+
+              doc.setFontSize(14);
+              doc.text(title, margin, margin - 10);
+
+              doc.addImage(url, "PNG", x, y, imgWidth, imgHeight);
+              const baseTitle = fig?.title || `plot-${index + 1}`;
+              let safeTitle = baseTitle.replace(/[^a-zA-Z0-9_-]/g, "_");
+              safeTitle = safeTitle.replace(/_+/g, "_").replace(/^_+|_+$/g, "");
+              if (!safeTitle) {
+                safeTitle = `plot-${index + 1}`;
+}
+
+doc.save(`${safeTitle}.pdf`);
+            };
+          } catch (e) {
+            console.error("Ошибка экспорта PDF", e);
+            toast("Не удалось сохранить PDF");
+          }
+        });
+
+        window.addEventListener("resize", () => {
+          Plotly.Plots.resize(gd);
+        });
+      }).catch((err) => {
+        console.error(`Ошибка рендера графика ${index}`, err);
+        frame.innerHTML = `
           <div style="padding:16px;color:#f88;">
             Ошибка рендера графика ${index + 1}
           </div>
         `;
-        });
+      });
     });
   } catch (e) {
     console.error(e);
