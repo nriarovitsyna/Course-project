@@ -18,3 +18,5 @@ pandas==2.2.0
 # Natasha для text.py
 natasha==1.6.0
 razdel==0.5.0
+
+reportlab

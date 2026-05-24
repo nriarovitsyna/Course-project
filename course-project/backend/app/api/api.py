@@ -4,6 +4,7 @@ from app.api.routers.programs import router as programs_router
 from app.api.routers.filters import router as filters_router
 from app.api.routers.analytics import router as analytics_router
 from app.api.routers.ml import router as ml_router
+from app.api.routers.export import router as export_router 
 
 api_router = APIRouter()
 
@@ -11,3 +12,4 @@ api_router.include_router(programs_router, prefix="/programs")
 api_router.include_router(filters_router, prefix="/filters")
 api_router.include_router(analytics_router, prefix="/analytics")
 api_router.include_router(ml_router, prefix="/ml")
+api_router.include_router(export_router, prefix="/export") 
